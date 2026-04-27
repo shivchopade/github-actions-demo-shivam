@@ -25,3 +25,5 @@ jobs:
           context: ./backend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/githubactions:latest
+
+          
