@@ -19,13 +19,14 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: shiv9
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push
         uses: docker/build-push-action@v7
         with:
           context: ./backend
           push: true
           tags: shiv9/githubactions:latest
 
+          
