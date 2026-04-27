@@ -1,4 +1,4 @@
-name: TWS CI Workflow
+name: shivams workflow
 
 on:
   push:
