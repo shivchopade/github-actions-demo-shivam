@@ -26,11 +26,12 @@ jobs:
             # Go to project folder
             cd github-actions-demo-shivam
 
-            # Pull latest code
+            # Pull latest code (frontend, nginx config, docker-compose, etc.)
             git pull origin main
 
-            # Deploy using Docker Compose (modern)
+            # Pull latest backend image from DockerHub
             docker compose pull
+
+            # Recreate all containers (force-recreate ensures nginx picks up new files)
             docker compose down
-            docker compose up -d
-            
+            docker compose up -d --force-recreate
