@@ -1,8 +1,8 @@
-name: TWS CD Workflow
+name: Shivam's CI , CD Workflow
 
 on:
   workflow_run:
-    workflows: ["TWS CI Workflow"]
+    workflows: ["Shivam's CI , CD Workflow"]
     types:
       - completed
 
@@ -18,32 +18,20 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            set -e
-
-            REPO_DIR="github-actions-demo-shivam"
-
             # Clone repo if not exists
-            if [ ! -d "$REPO_DIR" ]; then
+            if [ ! -d "github-actions-demo-shivam" ]; then
               git clone https://github.com/shivchopade/github-actions-demo-shivam.git
             fi
 
-            cd "$REPO_DIR"
+            # Go to project folder
+            cd github-actions-demo-shivam
 
-            # Force-sync with remote (this is the key fix)
-            # git pull can fail silently if there are local changes
-            git fetch origin main
-            git reset --hard origin/main
-            git clean -fd
+            # Pull latest code (frontend, nginx config, docker-compose, etc.)
+            git pull origin main
 
             # Pull latest backend image from DockerHub
             docker compose pull
 
-            # Recreate all containers with fresh volume mounts
+            # Recreate all containers (force-recreate ensures nginx picks up new files)
             docker compose down
             docker compose up -d --force-recreate
-
-            echo "=== Deployment complete ==="
-            echo "Frontend files:"
-            ls -la frontend/
-            echo "Nginx config:"
-            cat nginx/nginx.conf | head -20
