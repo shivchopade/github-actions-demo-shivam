@@ -1,8 +1,8 @@
-name: Shivam's CI , CD Workflow
+name: TWS CD Workflow
 
 on:
   workflow_run:
-    workflows: ["Shivam's CI , CD Workflow"]
+    workflows: ["TWS CI Workflow"]
     types:
       - completed
 
@@ -18,20 +18,24 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Clone repo if not exists
-            if [ ! -d "github-actions-demo-shivam" ]; then
+            set -e
+
+            REPO_DIR="github-actions-demo-shivam"
+
+            # Clone only once
+            if [ ! -d "$REPO_DIR" ]; then
               git clone https://github.com/shivchopade/github-actions-demo-shivam.git
             fi
 
-            # Go to project folder
-            cd github-actions-demo-shivam
+            cd "$REPO_DIR"
 
-            # Pull latest code (frontend, nginx config, docker-compose, etc.)
+            # Fast update (no heavy reset)
             git pull origin main
 
-            # Pull latest backend image from DockerHub
+            # Only pull updated images (fast if unchanged)
             docker compose pull
 
-            # Recreate all containers (force-recreate ensures nginx picks up new files)
-            docker compose down
-            docker compose up -d --force-recreate
+            # Restart only changed containers
+            docker compose up -d
+
+            echo "✅ Deployment done"
