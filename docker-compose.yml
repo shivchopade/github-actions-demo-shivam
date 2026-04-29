@@ -1,6 +1,5 @@
-version: "3.9"
-
 services:
+  # MySQL Database
   db:
     image: mysql:8.4
     restart: unless-stopped
@@ -14,9 +13,16 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
+  # Go Backend API
   backend:
-    image: shiv9/githubactions:latest
+    image: ${DOCKERHUB_USERNAME}/skillpulse-backend:shyam
     restart: unless-stopped
     environment:
       DB_HOST: db
@@ -26,8 +32,10 @@ services:
       DB_NAME: ${DB_NAME}
       PORT: "8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
+  # Nginx - Frontend + Reverse Proxy
   nginx:
     image: nginx:alpine
     restart: unless-stopped
@@ -41,5 +49,3 @@ services:
 
 volumes:
   mysql_data:
-
-  
