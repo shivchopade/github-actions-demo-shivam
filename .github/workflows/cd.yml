@@ -29,13 +29,23 @@ jobs:
 
             cd "$REPO_DIR"
 
-            # Fast update (no heavy reset)
+            echo "🔄 Pulling latest code..."
             git pull origin main
 
-            # Only pull updated images (fast if unchanged)
-            docker compose pull
+            echo "🔍 Checking for new Docker image..."
+            IMAGE="shiv9/githubactions:latest"
 
-            # Restart only changed containers
-            docker compose up -d
+            # Check if new image exists
+            docker pull $IMAGE > /tmp/docker_pull.log 2>&1
 
-            echo "✅ Deployment done"
+            if grep -q "Downloaded newer image" /tmp/docker_pull.log; then
+              echo "🚀 New image found → restarting backend only"
+              docker compose up -d --no-deps backend
+            else
+              echo "⚡ No new image → skipping backend restart"
+            fi
+
+            echo "🌐 Restarting nginx (for frontend updates)"
+            docker compose restart nginx
+
+            echo "✅ Deployment completed"
