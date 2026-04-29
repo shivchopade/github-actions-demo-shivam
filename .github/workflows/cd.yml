@@ -22,30 +22,27 @@ jobs:
 
             REPO_DIR="github-actions-demo-shivam"
 
-            # Clone only once
+            # 1. Clone if missing, otherwise enter directory
             if [ ! -d "$REPO_DIR" ]; then
+              echo "🌱 Cloning repository..."
               git clone https://github.com/shivchopade/github-actions-demo-shivam.git
             fi
 
             cd "$REPO_DIR"
 
-            echo "🔄 Pulling latest code..."
-            git pull origin main
+            # 2. Fast and safe Git sync
+            echo "🔄 Syncing latest code..."
+            git fetch origin main
+            git reset --hard origin/main
 
-            echo "🔍 Checking for new Docker image..."
-            IMAGE="shiv9/githubactions:latest"
+            # 3. Pull latest images defined in your docker-compose.yml
+            echo "⬇️ Pulling latest Docker images..."
+            docker compose pull
 
-            # Check if new image exists
-            docker pull $IMAGE > /tmp/docker_pull.log 2>&1
+            # 4. Smart update: Only recreates containers whose image or config changed
+            echo "🚀 Applying changes..."
+            docker compose up -d --remove-orphans
 
-            if grep -q "Downloaded newer image" /tmp/docker_pull.log; then
-              echo "🚀 New image found → restarting backend only"
-              docker compose up -d --no-deps backend
-            else
-              echo "⚡ No new image → skipping backend restart"
-            fi
+            echo "✅ Deployment completed rapidly!"
 
-            echo "🌐 Restarting nginx (for frontend updates)"
-            docker compose restart nginx
-
-            echo "✅ Deployment completed"
+            
