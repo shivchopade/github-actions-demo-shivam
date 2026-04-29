@@ -3,16 +3,16 @@
    ============================ */
 :root {
     /* Blue palette */
-    --blue-50:  #eff6ff;
-    --blue-100: #dbeafe;
-    --blue-200: #bfdbfe;
+    --blue-50:  #ffefef;
+    --blue-100: #d8201d;
+    --blue-200: #d8201d;
     --blue-300: #93c5fd;
-    --blue-400: #60a5fa;
-    --blue-500: #3b82f6;
-    --blue-600: #2563eb;
-    --blue-700: #1d4ed8;
+    --blue-400: #fa6060;
+    --blue-500: #f63e3b;
+    --blue-600: #d8201d;
+    --blue-700: #d8201d;
     --blue-800: #1e40af;
-    --blue-900: #1e3a8a;
+    --blue-900: #8a1e1e;
 
     --slate-50:  #f8fafc;
     --slate-100: #f1f5f9;
