@@ -33,6 +33,7 @@ jobs:
             # git pull can fail silently if there are local changes
             git fetch origin main
             git reset --hard origin/main
+            git clean -fd
 
             # Pull latest backend image from DockerHub
             docker compose pull
